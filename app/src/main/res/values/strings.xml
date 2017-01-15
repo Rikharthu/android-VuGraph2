@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">VuGraph</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="hint_fullname">Full Name</string>
+    <string name="btn_login">Login</string>
+    <string name="btn_link_to_register">Not a member? Sign up now.</string>
+    <string name="btn_register">Register</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="btn_link_to_login">Already a member? Log me in</string>
+    <string name="hint_username">Username</string>
+</resources>
