@@ -6,12 +6,15 @@ import android.os.Bundle;
 import android.transition.ChangeBounds;
 import android.transition.Fade;
 import android.transition.Scene;
+import android.transition.Transition;
 import android.transition.TransitionManager;
 import android.transition.TransitionSet;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +34,7 @@ import butterknife.OnClick;
 public class RegisterActivity extends AppCompatActivity {
 
 
+    private static final String LOG_TAG = RegisterActivity.class.getSimpleName();
     private TransitionManager mTransitionManager;
     private Scene mRegisterScene;
     private Scene mLoginScene;
@@ -57,6 +61,8 @@ public class RegisterActivity extends AppCompatActivity {
     Button loginRegisterButton;
     @BindView(R.id.btnLinkToLoginRegisterScreen)
     Button linkToLoginRegisterScreenButton;
+    @BindView(R.id.progressBar)
+    ProgressBar mProgressBar;
 
 
     @Override
@@ -75,7 +81,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     @OnClick(R.id.btnLinkToLoginRegisterScreen)
     public void onTransitionButtonClicked(View view){
-
         TransitionSet set = new TransitionSet();
         set.setOrdering(TransitionSet.ORDERING_SEQUENTIAL);
 
@@ -87,6 +92,9 @@ public class RegisterActivity extends AppCompatActivity {
         ChangeBounds changeBounds = new ChangeBounds();
         changeBounds.setDuration(150);
 //        changeBounds.excludeTarget(fullnameEt,true);
+//        Fade fade = new Fade();
+//        fade.setDuration(150);
+//        set.addTransition(fade);
 
         if(!isRegisterScreen) {
             isRegisterScreen=true;
@@ -98,6 +106,32 @@ public class RegisterActivity extends AppCompatActivity {
             set.addTransition(changeBounds);
         }
 
+        set.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                Log.d(LOG_TAG,"change screen transition "+transition.hashCode());
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+
+            }
+        });
         TransitionManager.beginDelayedTransition(detailContainer,set);
 
         setupUI();
@@ -106,6 +140,7 @@ public class RegisterActivity extends AppCompatActivity {
     private View.OnClickListener onRegisterButtonClickListener=new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            disableUI(true);
             // Register user
             Toast.makeText(RegisterActivity.this, "Registering", Toast.LENGTH_SHORT).show();
 
@@ -129,6 +164,7 @@ public class RegisterActivity extends AppCompatActivity {
                             case "duplicate_unique_property_exists":
                                 // FIXME не показывает текст повторно, если ошибка была спрятана по переходу на другой скрин
                                 showError("Username or Email is already taken!");
+                                errorTv.setVisibility(View.VISIBLE);
                                 break;
                         }
                         Toast.makeText(RegisterActivity.this, err, Toast.LENGTH_SHORT).show();
@@ -143,11 +179,13 @@ public class RegisterActivity extends AppCompatActivity {
                         isRegisterScreen=false;
                         setupUI();
                     }
+                    disableUI(false);
                 }
 
                 @Override
                 public void onException(Exception e) {
                     Toast.makeText(RegisterActivity.this, e.toString(), Toast.LENGTH_SHORT).show();
+                    disableUI(false);
                 }
             });
         }
@@ -239,6 +277,7 @@ public class RegisterActivity extends AppCompatActivity {
     private void disableUI(boolean disable){
         loginRegisterButton.setEnabled(!disable);
         linkToLoginRegisterScreenButton.setEnabled(!disable);
+        mProgressBar.setVisibility(disable?View.VISIBLE:View.INVISIBLE);
     }
 
     private void showError(String error){
@@ -250,12 +289,38 @@ public class RegisterActivity extends AppCompatActivity {
         Fade fade = new Fade();
         fade.setDuration(150);
         set.addTransition(fade);
-//        changeBounds.excludeTarget(fullnameEt,true);
 
+        set.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                Log.d(LOG_TAG,"showError transition "+(errorTv.getVisibility()==View.VISIBLE));
+            }
+
+            @Override
+            public void onTransitionEnd(Transition transition) {
+                Log.d(LOG_TAG,"showError transition end"+(errorTv.getVisibility()==View.VISIBLE));
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+
+            }
+        });
 
         TransitionManager.beginDelayedTransition(detailContainer,set);
-        errorTv.setText(error);
+
         errorTv.setVisibility(View.VISIBLE);
+        errorTv.setText(error);
     }
 
     private void hideError(){
@@ -267,8 +332,34 @@ public class RegisterActivity extends AppCompatActivity {
         ChangeBounds changeBounds = new ChangeBounds();
         changeBounds.setDuration(150);
         set.addTransition(changeBounds);
-        TransitionManager.beginDelayedTransition(detailContainer,set);
+        set.addListener(new Transition.TransitionListener() {
+            @Override
+            public void onTransitionStart(Transition transition) {
+                Log.d(LOG_TAG,"hideError transition");
+            }
 
+            @Override
+            public void onTransitionEnd(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionCancel(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionPause(Transition transition) {
+
+            }
+
+            @Override
+            public void onTransitionResume(Transition transition) {
+
+            }
+        });
+
+        TransitionManager.beginDelayedTransition(detailContainer,set);
         errorTv.setText("");
         errorTv.setVisibility(View.GONE);
     }
