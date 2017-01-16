@@ -26,6 +26,7 @@ public class ApiBAAS {
         return apigeeDataClient;
     }
 
+    // TODO refactor to initialize in Application
     private ApiBAAS(Context context){
         ApiBAAS.context=context.getApplicationContext();
         apigeeClient = new ApigeeClient(ORG_NAME,APP_NAME,BASE_URL,ApiBAAS.context);

@@ -11,4 +11,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="btn_link_to_login">Already a member? Log me in</string>
     <string name="hint_username">Username</string>
+    <string name="drawer_open">drawer open</string>
+    <string name="drawer_close">drawer close</string>
+    <string name="logout">Logout</string>
 </resources>

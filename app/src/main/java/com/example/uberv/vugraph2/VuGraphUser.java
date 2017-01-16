@@ -11,6 +11,7 @@ public class VuGraphUser {
     private String email;
     private String username;
     private long expiresAt=-1;
+//    private String role;
 
     public VuGraphUser() {
     }
@@ -20,7 +21,16 @@ public class VuGraphUser {
         lastname=user.getLastname();
         email=user.getEmail();
         username=user.getUsername();
+        //role = user.getPicture();
     }
+
+//    public String getRole() {
+//        return role;
+//    }
+//
+//    public void setRole(String role) {
+//        this.role = role;
+//    }
 
     public String getFirstname() {
         return firstname;

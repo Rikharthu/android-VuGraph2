@@ -47,6 +47,10 @@ public class PreferencesUtils {
         return user;
     }
 
+    public static void remove(String key){
+        editSharedPrefs().remove(key).commit();
+    }
+
     public static void setCurrentUser(VuGraphUser user){
         if(user==null){
 
