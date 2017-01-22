@@ -1,51 +1,60 @@
 package com.example.uberv.vugraph2;
 
+import android.graphics.Bitmap;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.apigee.sdk.data.client.entities.User;
+import com.google.gson.annotations.Expose;
 
-/** Model class that wrapes necessary information from Apigee.User */
-public class VuGraphUser {
+/**
+ * Model class that wrapes necessary information from Apigee.User
+ */
+public class VuGraphUser implements Parcelable{
 
-    private String firstname;
-    private String lastname;
+    private String name;
     private String accessToken;
     private String email;
     private String username;
-    private long expiresAt=-1;
-//    private String role;
+    private String avatarUrl;
+    private String role;
+    @Expose(serialize = false)
+    private transient Bitmap avatar;
+    private long expiresAt = -1;
 
     public VuGraphUser() {
     }
 
     public VuGraphUser(User user) {
-        firstname=user.getFirstname();
-        lastname=user.getLastname();
-        email=user.getEmail();
-        username=user.getUsername();
-        //role = user.getPicture();
+        name = user.getName();
+        email = user.getEmail();
+        username = user.getUsername();
+        String role = user.getStringProperty("role");
+        this.role = (role==null)||(role.isEmpty())?"guest":role;
+        avatarUrl=user.getStringProperty("avatarUrl");
     }
 
-//    public String getRole() {
-//        return role;
-//    }
-//
-//    public void setRole(String role) {
-//        this.role = role;
-//    }
-
-    public String getFirstname() {
-        return firstname;
+    public boolean isAuthorized() {
+        long a = System.currentTimeMillis();
+        return accessToken != null // token exists
+                && expiresAt != -1
+                && expiresAt > System.currentTimeMillis(); // and it's not expired
     }
 
-    public void setFirstname(String firstname) {
-        this.firstname = firstname;
+    public String getRole() {
+        return role;
     }
 
-    public String getLastname() {
-        return lastname;
+    public void setRole(String role) {
+        this.role = role;
     }
 
-    public void setLastname(String lastname) {
-        this.lastname = lastname;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getAccessToken() {
@@ -80,5 +89,58 @@ public class VuGraphUser {
         this.expiresAt = expiresAt;
     }
 
+    public String getAvatarUrl() {
+        return avatarUrl;
+    }
 
+    public void setAvatarUrl(String avatarUrl) {
+        this.avatarUrl = avatarUrl;
+    }
+
+    public Bitmap getAvatar() {
+        return avatar;
+    }
+
+    public void setAvatar(Bitmap avatar) {
+        this.avatar = avatar;
+    }
+
+    protected VuGraphUser(Parcel in) {
+        name = in.readString();
+        accessToken = in.readString();
+        email = in.readString();
+        username = in.readString();
+        avatarUrl = in.readString();
+        role = in.readString();
+        expiresAt = in.readLong();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(name);
+        dest.writeString(accessToken);
+        dest.writeString(email);
+        dest.writeString(username);
+        dest.writeString(avatarUrl);
+        dest.writeString(role);
+        dest.writeLong(expiresAt);
+    }
+
+    @SuppressWarnings("unused")
+    public static final Parcelable.Creator<VuGraphUser> CREATOR = new Parcelable.Creator<VuGraphUser>() {
+        @Override
+        public VuGraphUser createFromParcel(Parcel in) {
+            return new VuGraphUser(in);
+        }
+
+        @Override
+        public VuGraphUser[] newArray(int size) {
+            return new VuGraphUser[size];
+        }
+    };
 }

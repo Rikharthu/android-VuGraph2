@@ -2,20 +2,24 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_first_fragment"
-            android:title="First"/>
+            android:checked="true"
+            android:id="@+id/ar_fragment"
+            android:title="@string/augmented_reality"/>
         <item
+            android:enabled="false"
             android:id="@+id/nav_second_fragment"
-            android:title="Second"/>
+            android:title="@string/virtual_reality"/>
         <item
+            android:enabled="false"
             android:id="@+id/nav_third_fragment"
-            android:title="Third"/>
+            android:title="@string/another_reality"/>
 
-        <item android:title="Sub items">
+        <item android:title="@string/menu_other">
             <menu>
                 <group android:checkableBehavior="single">
                     <item
-                        android:title="Sub item 1"/>
+                        android:id="@+id/nav_settings"
+                        android:title="@string/menu_settings"/>
                     <!--<item-->
                         <!--android:title="Sub item 2"/>-->
                 </group>

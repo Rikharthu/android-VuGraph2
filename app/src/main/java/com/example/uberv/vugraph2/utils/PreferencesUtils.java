@@ -23,6 +23,7 @@ public class PreferencesUtils {
 
     private static SharedPreferences preferences;
 
+
     /** Initialize shared preferences */
     public static void initSharedPref(Context context) {
         preferences = context.getSharedPreferences("oauth", Context.MODE_PRIVATE);

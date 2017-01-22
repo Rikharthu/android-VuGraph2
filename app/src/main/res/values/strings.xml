@@ -14,4 +14,30 @@
     <string name="drawer_open">drawer open</string>
     <string name="drawer_close">drawer close</string>
     <string name="logout">Logout</string>
+
+    <string name="start_preview">Start Preview</string>
+    <string name="features">Features:</string>
+    <string name="item_mu_heading">Mazumtirdzniecības Uzņēmumi</string>
+    <string name="item_mu_subheading">Kopējais apgrozījums faktiskajās cenās, milj. eiro</string>
+    <string name="item_mu_description">Mazumtirdzniecības uzņēmumu apgrozijumu grafika ilustrācija izmantojot AR tehnoloģijas.</string>
+
+    <string name="dialog_confirm_logout">Are you sure you want to logout?</string>
+    <string name="dialog_logout">Logging Out</string>
+    <string name="logged_out">Logged out</string>
+    <string name="dialog_player_needed">Player App Needed</string>
+    <string name="dialog_player_no_player_desc">In order to start AR experience a player application is required.</string>
+    <string name="augmented_reality">Augmented Reality</string>
+    <string name="virtual_reality">Virtual Reality</string>
+    <string name="another_reality">Another Reality</string>
+    <string name="sub_items">Sub items</string>
+    <string name="sub_item_1">Sub item 1</string>
+    <string name="menu_other">Other</string>
+    <string name="menu_settings">Settings</string>
+
+    <string-array name="item_mu_features">
+        <item>Apgrozījumu grafiks pa mēnešiem no 2014. gada līdz 2016.</item>
+        <item>Kopēja apgrozījuma grafiks no 2010. gada līdz 2016. gada.</item>
+        <item>Augmented Reality experience: both graphs are visualized.</item>
+    </string-array>
+
 </resources>

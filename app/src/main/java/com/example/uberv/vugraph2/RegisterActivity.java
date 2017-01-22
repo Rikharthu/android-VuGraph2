@@ -1,6 +1,10 @@
 package com.example.uberv.vugraph2;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,13 +25,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.apigee.sdk.data.client.callbacks.ApiResponseCallback;
+import com.apigee.sdk.data.client.entities.Entity;
+import com.apigee.sdk.data.client.entities.User;
 import com.apigee.sdk.data.client.response.ApiResponse;
 import com.example.uberv.vugraph2.api.ApiBAAS;
+import com.example.uberv.vugraph2.utils.FileUtils;
 import com.example.uberv.vugraph2.utils.PreferencesUtils;
 import com.example.uberv.vugraph2.utils.ValidationHelper;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.File;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,12 +84,23 @@ public class RegisterActivity extends AppCompatActivity {
 
         ButterKnife.bind(this);
 
+        Intent intent = getIntent();
+        if(intent!=null){
+            Bundle bundle = intent.getBundleExtra(MainActivity.LOGOUT_MESSAGE_BUNDLE_KEY);
+            if(bundle!=null){
+                String logoutMessage=bundle.getString(MainActivity.LOGOUT_MESSAGE_KEY);
+                if(logoutMessage!=null){
+                    // show toast that we are logged out
+                    showSnackbar("Logged out");
+                }
+            }
+
+        }
+
         mApiBAAS=ApiBAAS.getInstance(this);
 //        getWindow().setEnterTransition(new Explode());
         setupUI();
     }
-
-
 
     @OnClick(R.id.btnLinkToLoginRegisterScreen)
     public void onTransitionButtonClicked(View view){
@@ -107,33 +128,6 @@ public class RegisterActivity extends AppCompatActivity {
             set.addTransition(scale);
             set.addTransition(changeBounds);
         }
-
-        set.addListener(new Transition.TransitionListener() {
-            @Override
-            public void onTransitionStart(Transition transition) {
-                Log.d(LOG_TAG,"change screen transition "+transition.hashCode());
-            }
-
-            @Override
-            public void onTransitionEnd(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionCancel(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionPause(Transition transition) {
-
-            }
-
-            @Override
-            public void onTransitionResume(Transition transition) {
-
-            }
-        });
         TransitionManager.beginDelayedTransition(detailContainer,set);
 
         setupUI();
@@ -180,6 +174,8 @@ public class RegisterActivity extends AppCompatActivity {
                 mApiBAAS.getApigeeDataClient().createUserAsync(username, fullname, email, password, new ApiResponseCallback() {
                     @Override
                     public void onResponse(ApiResponse apiResponse) {
+                        // TODO debug
+                        apiResponse.getUser();
                         if (!apiResponse.completedSuccessfully()) {
                             // error
                             String err = apiResponse.getErrorDescription();
@@ -191,13 +187,10 @@ public class RegisterActivity extends AppCompatActivity {
                                     errorTv.setVisibility(View.VISIBLE);
                                     break;
                             }
-                            Toast.makeText(RegisterActivity.this, err, Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(RegisterActivity.this, err, Toast.LENGTH_SHORT).show();
                         } else {
                             // registered succesfully
-                            Snackbar snackbar = Snackbar.make(rootLayout, "Registered Succefully!", Snackbar.LENGTH_LONG);
-                            snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorAccent));
-                            snackbar.setActionTextColor(getResources().getColor(R.color.white));
-                            snackbar.show();
+                            showSnackbar("Registered Succefully!");
 
                             // navigate to login screen
                             isRegisterScreen = false;
@@ -216,10 +209,17 @@ public class RegisterActivity extends AppCompatActivity {
         }
     };
 
+    private void showSnackbar(String message){
+        Snackbar snackbar = Snackbar.make(rootLayout, message, Snackbar.LENGTH_LONG);
+        snackbar.getView().setBackgroundColor(getResources().getColor(R.color.colorAccent));
+        snackbar.setActionTextColor(getResources().getColor(R.color.white));
+        snackbar.show();
+    }
+
     private View.OnClickListener onLoginButtonClickListener=new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // Register user
+            // Login user
             Toast.makeText(RegisterActivity.this, "Logging in", Toast.LENGTH_SHORT).show();
             disableUI(true);
             hideApiError();
@@ -260,8 +260,8 @@ public class RegisterActivity extends AppCompatActivity {
                         } else {
                             // save user data
                             Toast.makeText(RegisterActivity.this, "Logged in!", Toast.LENGTH_SHORT).show();
-                            // save user data
                             // FIXME REFACTOR!!!
+                            // TODO apiUser now has "role"
                             VuGraphUser currentUser = new VuGraphUser(apiResponse.getUser());
                             currentUser.setAccessToken(apiResponse.getAccessToken());
                             String rawResponse = apiResponse.getRawResponse();
@@ -273,10 +273,16 @@ public class RegisterActivity extends AppCompatActivity {
                                 e.printStackTrace();
                             }
                             currentUser.setExpiresAt(expiresAt - 60000);
+                            // bitmap
+                            Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.vugraph_preview);
+                            bitmap = FileUtils.getCircularBitmap(bitmap);
+//                            String avatarUrl = FileUtils.saveBitmapToCache(RegisterActivity.this,"avatar",bitmap);
+//                            currentUser.setAvatar(bitmap);
+//                            currentUser.setAvatarUrl(avatarUrl);
+
                             //currentUser.setExpiresAt(apiResponse);
                             PreferencesUtils.setCurrentUser(currentUser);
                             VuGraphUser testUser = PreferencesUtils.getCurrentUser();
-                            Toast.makeText(RegisterActivity.this, testUser.toString(), Toast.LENGTH_SHORT).show();
                             disableUI(false);
 
                             // navigate to the main activity
@@ -411,6 +417,4 @@ public class RegisterActivity extends AppCompatActivity {
         errorTv.setText("");
         errorTv.setVisibility(View.GONE);
     }
-
-
 }
